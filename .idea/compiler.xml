@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="common" />
+        <module name="dao" />
+        <module name="generatorSqlmap" />
+        <module name="goods-interface" />
+        <module name="goods-service" />
+        <module name="manager-web" />
+        <module name="pojo" />
+        <module name="shop-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common" target="1.8" />
+      <module name="dao" target="1.8" />
+      <module name="generatorSqlmap" target="1.8" />
+      <module name="goods-interface" target="1.8" />
+      <module name="goods-service" target="1.8" />
+      <module name="manager-web" target="1.8" />
+      <module name="pojo" target="1.8" />
+      <module name="shop-web" target="1.8" />
+      <module name="shoppingproject" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
