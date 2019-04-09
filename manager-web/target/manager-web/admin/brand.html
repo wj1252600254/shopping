@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<meta charset="gbk">
+<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<title>品牌管理</title>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+<link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+<link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="../plugins/angularjs/angular.min.js"></script>
+
+<!-- 分页组件开始 -->
+<script src="../plugins/angularjs/pagination.js"></script>
+<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+<!-- 分页组件结束 -->
+
+
+<script>
+    var app = angular.module("shopping", ['pagination']);
+    app.controller("brandController", function ($scope, $http) {
+        $scope.findAll = function () {
+            $http.get('../findall').success(
+                function (response) {
+                    $scope.list = response;
+                }
+            );
+        }
+        //分页控件配置
+        $scope.paginationConf = {
+            currentPage: 1,
+            totalItems: 10,
+            itemsPerPage: 10,
+            perPageOptions: [10, 20, 30, 40, 50],  //分页选项
+            onChange: function () {     //当页码变更自动触发的发放
+                $scope.reloadList();//重新加载
+            }
+        };
+
+        $scope.reloadList = function () {
+            //切换页码
+            $scope.findPage($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
+        };
+
+
+        //分页
+        $scope.findPage = function (page, sizee) {
+            $http.get('../findPage?page=' + page + '&sizee=' + sizee).success(
+                function (response) {
+                    $scope.list = response.rows;
+                    $scope.paginationConf.totalItems = response.total;//更新总记录数
+                }
+            );
+        }
+
+        //保存
+        $scope.save = function () {
+            $http.post('../add', $scope.entity).success(
+                function (response) {
+                    if (response.success) {
+                        //重新查询
+                        $scope.reloadList();//重新加载
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            );
+        }
+
+
+    });
+
+
+</script>
+
+
+</head>
+<body class="hold-transition skin-red sidebar-mini" ng-app="shopping" ng-controller="brandController">
+<!-- .box-body -->
+<div class="box-header with-border">
+    <h3 class="box-title">BrandManage</h3>
+</div>
+
+<div class="box-body">
+
+    <!-- 数据表格 -->
+    <div class="table-box">
+
+        <!--工具栏-->
+        <div class="pull-left">
+            <div class="form-group form-inline">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" title="new" data-toggle="modal"
+                            data-target="#editModal"><i class="fa fa-file-o"></i> new
+                    </button>
+                    <button type="button" class="btn btn-default" title="delete"><i class="fa fa-trash-o"></i> delete
+                    </button>
+                    <button type="button" class="btn btn-default" title="fresh" onclick="window.location.reload();"><i
+                            class="fa fa-refresh"></i> fresh
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="box-tools pull-right">
+            <div class="has-feedback">
+
+            </div>
+        </div>
+        <!--工具栏/-->
+
+        <!--数据列表-->
+        <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+            <thead>
+            <tr>
+                <th class="" style="padding-right:0px">
+                    <input id="selall" type="checkbox" class="icheckbox_square-blue">
+                </th>
+                <th class="sorting_asc">BrandID</th>
+                <th class="sorting">BrandName</th>
+                <th class="sorting">InitialLetter</th>
+                <th class="text-center">Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="entity in list">
+                <td><input type="checkbox"></td>
+                <td>{{entity.id}}</td>
+                <td>{{entity.name}}</td>
+                <td>{{entity.firstChar}}</td>
+                <td class="text-center">
+                    <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal">edit
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--数据列表/-->
+        <tm-pagination conf="paginationConf"></tm-pagination>
+
+
+    </div>
+    <!-- 数据表格 /-->
+
+
+</div>
+<!-- /.box-body -->
+
+<!-- 编辑窗口 -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">BrandEditor</h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-striped" width="800px">
+                    <tr>
+                        <td>BrandName</td>
+                        <td><input class="form-control" placeholder="BrandName" ng-model="entity.name"></td>
+                    </tr>
+                    <tr>
+                        <td>InitialLetter</td>
+                        <td><input class="form-control" placeholder="InitialLetter" ng-model="entity.firstChar"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">save</button>
+                <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
